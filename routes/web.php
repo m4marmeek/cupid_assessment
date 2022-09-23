@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PreferenceController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('auth')->group(function() {
+    Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::resource('preferences', PreferenceController::class)->except(['index', 'show', 'destroy']);
+    Route::resource('users', UserController::class)->only(['edit', 'update']);
 });
+
+
+Route::get('/auth/redirect', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
+ 
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+
+require __DIR__.'/auth.php';

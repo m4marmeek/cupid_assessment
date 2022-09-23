@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
@@ -15,12 +16,34 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'email' => $this->faker->unique()->freeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => Hash::make('password'), // password
+            'date_of_birth' => $this->faker->dateTimeBetween('-50 years', '-15 years'),
+            'gender' => $this->faker->randomElement(['Male', 'female']),
+            'annual_income' => $this->faker->numberBetween('10000', '500000'),
+            'occupation' => $this->faker->randomElement(['Private job', 'Government Job', 'Business']),
+            'family_type' => $this->faker->randomElement(['Joint family', 'Nuclear family']),
+            'manglik' => $this->faker->boolean(),
             'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
+    }
+    
+    public function admin()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'email' => 'admin@example.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('adminpass'), // adminpass
+            ];
+        });
     }
 
     /**
